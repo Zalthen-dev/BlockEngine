@@ -1,25 +1,24 @@
-# BlockEngine
+# BlockEngine (Demo)
+<img src="repo/BlockEngineCard.png"/>
 <a href="https://discord.gg/xMPCsx3dNf" style="text-decoration:none;">
     <img src="https://img.shields.io/badge/Discord-5865F2?logo=discord&logoColor=white&style=for-the-badge" alt="Discord"/>
 </a>
 
-<img src="repo/BlockEngineCard.png"/>
-
-# Supported Platforms
+## Supported Platforms
 - Linux
 - Windows `[Planned]`
 
-# Dependencies
+## Dependencies
 - [Luau](https://github.com/luau-lang/luau)
 - [Raylib](https://github.com/raysan5/raylib)
 
-# How to Build
+### How to Build
 1. Clone the repository using the web URL
 2. In BlockEngine repository folder, clone Luau repository (In the future, this won't be required!)
 3. Run makefile with `make`
 
-# Example
-BlockEngine supports executing a Lua Script, and with a Roblox-like API, you can create parts and edit them in real time!
+## How to Use
+BlockEngine supports executing a Lua Script by passing it as command-line argument, and with a familiar scripting API, you can create parts and edit them in real time!
 ```luau
 local part1 = Instance.new("Part")
 part1.Color = Color3.new(1,0,0)
