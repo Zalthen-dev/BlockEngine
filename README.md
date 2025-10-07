@@ -18,7 +18,7 @@
 3. Run makefile with `make`
 
 ## How to Use
-BlockEngine supports executing a Lua Script by passing it as command-line argument, and with a familiar scripting API, you can create parts and edit them in real time!
+BlockEngine supports executing a Luau Script by passing it as command-line argument, and with a familiar scripting API, you can create parts and edit them in real time!
 ```luau
 local part1 = Instance.new("Part")
 part1.Color = Color3.new(1,0,0)
@@ -45,7 +45,7 @@ end
 
 # Checklist
 Below is what you can expect for the future in BlockEngine's development! Expect this big list to expand as time goes on!
-- [ ] Limiting `os` library in Lua scripts
+- [ ] Limiting `os` library
 - [ ] Signals in Lua
 - [ ] Instance System
 - [ ] Physics
