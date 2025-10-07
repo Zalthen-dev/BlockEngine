@@ -1,9 +1,13 @@
 # BlockEngine
-[UNFINISHED] A free &amp; open-source game development software that makes things easy.
+<a href="https://discord.gg/xMPCsx3dNf" style="text-decoration:none;">
+    <img src="https://img.shields.io/badge/Discord-5865F2?logo=discord&logoColor=white&style=for-the-badge" alt="Discord"/>
+</a>
+
+<img src="repo/BlockEngineCard.png"/>
 
 # Supported Platforms
 - Linux
-- Windows [Planned]
+- Windows `[Planned]`
 
 # Dependencies
 - [Luau](https://github.com/luau-lang/luau)
