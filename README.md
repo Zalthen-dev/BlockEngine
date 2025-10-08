@@ -54,8 +54,7 @@
    - Install [CMake](https://cmake.org/download/)
    - Install Visual Studio with "Desktop development with C++" workload
 
-4. **Create a build folder**
-   mkdir build
+4. **Navigate to build folder**
    cd build
 
 5. **Configure the project**
