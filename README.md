@@ -17,37 +17,52 @@
 ### Linux
 
 1. **Clone the repository**
+   ```bash
    git clone https://github.com/Zalthen-dev/BlockEngine.git
    cd BlockEngine
-
+   ```
 2. **Clone dependencies**
+   ```bash
    git clone https://github.com/luau-lang/luau.git dependencies/luau
    git clone https://github.com/raysan5/raylib.git dependencies/raylib
+   ```
 
 3. **Install required system libraries**
+   ```bash
    sudo apt update
    sudo apt install -y build-essential cmake libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libxxf86vm-dev
+   ```
 
 4. **Navigate to the build directory**
+   ```bash
    cd build
+   ```
 
 5. **Configure the project**
+   ```bash
    cmake ..
+   ```
 
 6. **Build the project**
+   ```bash
    make -j$(nproc)
+   ```
 
 ---
 
 ### Windows
 
 1. **Clone the repository**
+   ```bash
    git clone https://github.com/Zalthen-dev/BlockEngine.git
    cd BlockEngine
+   ```
 
-2. **Clone dependencies** (temporary; future versions may not require this)
+2. **Clone dependencies**
+   ```bash
    git clone https://github.com/luau-lang/luau.git dependencies/luau
    git clone https://github.com/raysan5/raylib.git dependencies/raylib
+   ```
 
 3. **Install CMake and Visual Studio**
 
@@ -55,13 +70,19 @@
    - Install Visual Studio with "Desktop development with C++" workload
 
 4. **Navigate to build folder**
+   ```bash
    cd build
+   ```
 
 5. **Configure the project**
+   ```bash
    cmake ..
+   ```
 
 6. **Build the project**
+   ```bash
    cmake --build .
+   ```
 
 ## How to Use
 BlockEngine supports executing a Luau Script by passing it as command-line argument, and with a familiar scripting API, you can create parts and edit them in real time!
