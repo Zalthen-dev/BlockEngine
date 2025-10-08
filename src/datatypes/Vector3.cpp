@@ -1,5 +1,4 @@
 #include "Vector3.h"
-#include <cstring>
 
 const Vector3Game Vector3_zero = Vector3Game{0, 0, 0};
 const Vector3Game Vector3_one = Vector3Game{1, 1, 1};
@@ -140,6 +139,27 @@ static int Vector3_index(lua_State* L) {
     return 1;
 }
 
+static int Vector3_abs(lua_State* L) {
+    Vector3Game* v3 = (Vector3Game*)luaL_checkudata(L, 1, "Vector3Meta");
+    Vector3Game v = v3->abs();
+    lua_pushlightuserdata(L, &v);
+    return 1;
+}
+
+static int Vector3_ceil(lua_State* L) {
+    Vector3Game* v3 = (Vector3Game*)luaL_checkudata(L, 1, "Vector3Meta");
+    Vector3Game v = v3->ceil();
+    lua_pushlightuserdata(L, &v);
+    return 1;
+}
+
+static int Vector3_floor(lua_State* L) {
+    Vector3Game* v3 = (Vector3Game*)luaL_checkudata(L, 1, "Vector3Meta");
+    Vector3Game v = v3->floor();
+    lua_pushlightuserdata(L, &v);
+    return 1;
+}
+
 static int Vector3_dot(lua_State* L) {
     Vector3Game* v3a = (Vector3Game*)luaL_checkudata(L, 1, "Vector3Meta");
     Vector3Game* v3b = (Vector3Game*)luaL_checkudata(L, 2, "Vector3Meta");
@@ -170,7 +190,13 @@ static int Vector3_lerp(lua_State* L) {
     return 1;
 }
 
-// Binding
+static int Vector3_fuzzyeq(lua_State* L) {
+    Vector3Game* v3a = (Vector3Game*)luaL_checkudata(L, 1, "Vector3Meta");
+    Vector3Game* v3b = (Vector3Game*)luaL_checkudata(L, 2, "Vector3Meta");
+
+    lua_pushboolean(L, v3a->fuzzyequal(*v3b));
+    return 1;
+}
 
 void Vector3Game_Bind(lua_State* L) {
     lua_newtable(L);
@@ -192,6 +218,15 @@ void Vector3Game_Bind(lua_State* L) {
     lua_pushcfunction(L, Vector3_mul, "__mul"); lua_setfield(L, -2, "__mul");
     lua_pushcfunction(L, Vector3_div, "__div"); lua_setfield(L, -2, "__div");
     lua_pushcfunction(L, Vector3_unm, "__unm"); lua_setfield(L, -2, "__unm");
+
+    lua_pushcfunction(L, Vector3_abs, "Abs"); lua_setfield(L, -2, "Abs");
+    lua_pushcfunction(L, Vector3_ceil, "Ceil"); lua_setfield(L, -2, "Ceil");
+    lua_pushcfunction(L, Vector3_floor, "Floor"); lua_setfield(L, -2, "Floor");
+
+    lua_pushcfunction(L, Vector3_dot, "Dot"); lua_setfield(L, -2, "Dot");
+    lua_pushcfunction(L, Vector3_cross, "Cross"); lua_setfield(L, -2, "Cross");
+    lua_pushcfunction(L, Vector3_lerp, "Lerp"); lua_setfield(L, -2, "Lerp");
+    lua_pushcfunction(L, Vector3_fuzzyeq, "FuzzyEq"); lua_setfield(L, -2, "FuzzyEq");
     lua_pop(L, 1);
 
     pushVector3Const("zero", Vector3_zero);
