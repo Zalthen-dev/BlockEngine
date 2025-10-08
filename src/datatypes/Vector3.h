@@ -37,7 +37,7 @@ struct Vector3Game {
     float dot(const Vector3Game& v) const { return x*v.x + y*v.y + z*v.z; }
     Vector3Game cross(const Vector3Game& v) const { return { y * v.z - z * v.y,  z * v.x - x * v.z,  x * v.y - y * v.x }; }
     Vector3Game lerp(const Vector3Game& goal, float alpha) const { return *this + (goal - *this) * alpha; }
-    bool fuzzyequal(const Vector3Game& v, float epsilon = 1e-5) const { return fabsf(magnitude() - v.magnitude())<epsilon ; }
+    bool fuzzyequal(const Vector3Game& v, float epsilon = 1e-5) const { return fabsf(magnitude()) - fabsf(v.magnitude())<epsilon ; }
 };
 
 void Vector3Game_Bind(lua_State* L);
