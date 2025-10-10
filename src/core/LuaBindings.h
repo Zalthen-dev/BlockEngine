@@ -2,9 +2,9 @@
 
 #include <vector>
 
-#include "../../luau/VM/include/lua.h"
-#include "../../luau/VM/include/lualib.h"
-#include "../../luau/Compiler/include/luacode.h"
+#include "../../dependencies/luau/VM/include/lua.h"
+#include "../../dependencies/luau/VM/include/lualib.h"
+#include "../../dependencies/luau/Compiler/include/luacode.h"
 
 #include "../datatypes/Vector3.h"
 #include "../datatypes/Color3.h"
