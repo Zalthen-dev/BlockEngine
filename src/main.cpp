@@ -5,9 +5,8 @@
 #include <sstream>
 #include <string>
 
-#include "../luau/VM/include/lua.h"
-#include "../luau/VM/include/lualib.h"
-//#include "../luau/Compiler/include/luacode.h"
+#include <lua.h>
+#include <lualib.h>
 
 #include "datatypes/Task.h"
 #include "instances/BasePart.h"

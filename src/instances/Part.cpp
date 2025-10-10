@@ -1,5 +1,4 @@
 #include "Part.h"
-#include <pthread.h>
 
 const char* validShapes[] = { "Block", "Sphere", "Cylinder", "Wedge", "CornerWedge", nullptr };
 

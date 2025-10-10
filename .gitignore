@@ -1,0 +1,10 @@
+# Build
+build/*
+!build/.gitkeep
+
+# Dependencies
+dependencies/*
+!dependencies/.gitkeep
+
+# IDE
+.vscode/
