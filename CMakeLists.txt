@@ -35,16 +35,33 @@ endif()
 file(GLOB_RECURSE SOURCES "src/**/*.cpp")
 list(APPEND SOURCES src/main.cpp)
 
+file(GLOB_RECURSE SOURCES
+    src/*.cpp
+    ${DEPS_DIR}/rlImGui/*.cpp
+    ${DEPS_DIR}/imgui/*.cpp
+)
+
+list(FILTER SOURCES EXCLUDE REGEX "imgui_impl_.*\\.cpp")
+list(FILTER SOURCES EXCLUDE REGEX ".*/examples/.*")
+list(FILTER SOURCES EXCLUDE REGEX ".*/example_.*\\.cpp")
+list(FILTER SOURCES EXCLUDE REGEX ".*/demo_.*\\.cpp")
+list(FILTER SOURCES EXCLUDE REGEX ".*/tests?/.*")
+list(FILTER SOURCES EXCLUDE REGEX ".*/misc/fonts/binary_to_compressed_c\\.cpp")
+list(FILTER SOURCES EXCLUDE REGEX ".*/imgui_freetype\\.cpp")
+
 # Create executable
 add_executable(${PROJECT_NAME} ${SOURCES})
 
 # Include directories
-target_include_directories(${PROJECT_NAME} PRIVATE 
+target_include_directories(${PROJECT_NAME} PRIVATE
     ${DEPS_DIR}/luau/Ast/include
     ${DEPS_DIR}/luau/Config/include
     ${DEPS_DIR}/luau/VM/include
     ${DEPS_DIR}/luau/Compiler/include
     ${DEPS_DIR}/luau/Analysis/include
+    "${DEPS_DIR}/imgui"
+    "${DEPS_DIR}/rlImGui"
+    ${DEPS_DIR}/raylib/src
     ${CMAKE_SOURCE_DIR}
 )
 
