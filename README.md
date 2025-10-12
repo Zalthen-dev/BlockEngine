@@ -11,6 +11,8 @@
 ## Dependencies
 - [Luau](https://github.com/luau-lang/luau)
 - [Raylib](https://github.com/raysan5/raylib)
+- [ImGui](https://github.com/ocornut/imgui)
+- [rlImGui](https://github.com/raylib-extras/rlImGui)
 
 ## How to Build
 
@@ -25,6 +27,8 @@
    ```bash
    git clone https://github.com/luau-lang/luau.git dependencies/luau
    git clone https://github.com/raysan5/raylib.git dependencies/raylib
+   git clone https://github.com/ocornut/imgui.git dependencies/luau
+   git clone https://github.com/raylib-extras/rlImGui.git dependencies/rlImGui
    ```
 
 3. **Install required system libraries**
