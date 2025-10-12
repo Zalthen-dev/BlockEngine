@@ -1,6 +1,8 @@
 #pragma once
 
 #include <vector>
+#include <string>
+#include <sstream>
 
 #include "../../dependencies/luau/VM/include/lua.h"
 #include "../../dependencies/luau/VM/include/lualib.h"
@@ -15,16 +17,17 @@
 #include "../instances/Part.h"
 
 #include "Signal.h"
+#include "Logger.h"
 
 #include "raylib.h"
 #include "raymath.h"
 
-namespace LuaBindings {
-    extern std::vector<BasePart*>* g_instances;
-    extern Camera3D* gg_camera;
+extern std::vector<std::string> luaOutput;
+extern Logger logger;
 
+namespace LuaBindings {
     int Lua_SpawnPart(lua_State* L);
     int Lua_SetCameraPos(lua_State* L);
 
-    void RegisterScriptBindings(lua_State* L, std::vector<BasePart*>& parts, Camera3D& g_camera);
+    void RegisterScriptBindings(lua_State* L);
 }
