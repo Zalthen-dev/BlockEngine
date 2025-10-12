@@ -1,25 +1,34 @@
 #include <cmath>
 #include <cstdio>
-#include <vector>
 #include <fstream>
 #include <sstream>
 #include <string>
 
-#include <lua.h>
-#include <lualib.h>
-
-#include "datatypes/Task.h"
-#include "instances/BasePart.h"
-#include "instances/Part.h"
 #include "raylib.h"
 #include "raymath.h"
+
+
+//#include "imgui.h"
+//#include "rlImGui.h"
+#include "../dependencies/imgui/imgui.h"
+#include "../dependencies/rlImGui/rlImGui.h"
+// ^ had to do this to get clang to be quiet
+
+#include "datatypes/Task.h"
+#include "instances/Part.h"
 
 #include "core/Renderer.h"
 #include "core/LuaBindings.h"
 
+#include "ui/Console.h"
+#include "ui/TextEditor.h"
+
 lua_State* L_main = nullptr;
+std::vector<Gui*> g_guis;
 
 Camera3D g_camera{};
+Console console;
+TextEditor textEditor;
 
 static float gYaw = 0.0f;
 static float gPitch = 0.0f;
@@ -41,14 +50,11 @@ void RenderFrame(Camera3D camera) {
     RenderScene(camera, g_instances);
     //EndMode3D();
 
-    DrawText("WASD to move camera, Right Click to look around", 10, 10, 20, LIGHTGRAY);
-    DrawText("Hold LSHIFT to move slower", 10, 40, 20, LIGHTGRAY);
+    rlImGuiBegin();
+    for (auto gui :g_guis)
+        gui->Draw();
 
-    DrawRectangle(GetScreenWidth() - 30, GetScreenHeight() - 30, 20, 20, LIGHTGRAY);
-
-    int fps = GetFPS();
-    DrawText(TextFormat("FPS: %d", fps), 10, GetScreenHeight() - 30, 20, GREEN);
-
+    rlImGuiEnd();
     EndDrawing();
 }
 
@@ -56,14 +62,14 @@ int main(int argc, char** argv) {
     (void)(argc);
     (void)(argv);
 
+    L_main = luaL_newstate();
+    luaL_openlibs(L_main);
+    LuaBindings::RegisterScriptBindings(L_main);
+
     if (argc > 1) {
         printf("Lua script provided! Trying to load...\n");
+
         std::string scriptText = readFile(argv[1]);
-
-        L_main = luaL_newstate();
-        luaL_openlibs(L_main);
-
-        LuaBindings::RegisterScriptBindings(L_main, g_instances, g_camera);
 
         if (!Task_RunScript(L_main, scriptText)) {
             printf("Failed to load lua script!\n");
@@ -78,6 +84,11 @@ int main(int argc, char** argv) {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(1280, 720, "BlockEngine");
     SetTargetFPS(500);
+
+    rlImGuiSetup(true);
+    auto io = &ImGui::GetIO();
+    io->IniFilename = NULL;
+    io->LogFilename = NULL;
 
     PrepareRenderer();
 
@@ -102,13 +113,15 @@ int main(int argc, char** argv) {
 
     LoadSkybox();
 
+    console.SetVisible(true);
+    console.Log("Type 'help' for a list of commands");
+
+    textEditor.SetVisible(true);
+
     while (!WindowShouldClose()) {
         //const double time = GetTime();
         const double deltaTime = GetFrameTime();
-
         float mouseWheelDelta = GetMouseWheelMove();
-
-
         float moveSpeed = 25.0f * deltaTime;
 
         if (IsKeyDown(KEY_LEFT_SHIFT)) {
@@ -176,7 +189,9 @@ int main(int argc, char** argv) {
     g_tasks.clear();
     g_instances.clear();
 
+    rlImGuiShutdown();
     UnloadSkybox();
     CloseWindow();
+
     return 0;
 }
