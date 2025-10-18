@@ -1,6 +1,6 @@
 #include "Instance.h"
 
-std::vector<BasePart*> g_instances;
+std::vector<Object*> g_instances;
 
 static int Instance_new(lua_State* L) {
     const char* className = luaL_checkstring(L, 1);
