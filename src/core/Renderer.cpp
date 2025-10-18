@@ -1,8 +1,5 @@
 #include "Renderer.h"
 
-//TODO: add shadows and lights
-const int SHADOW_MAP_SIZE = 1024;
-
 Texture2D g_defaultTexture;
 
 static Color Color3ToColor(const Color3& c) {
@@ -71,11 +68,11 @@ void DrawPart(const Part part) {
     rlPopMatrix();
 }
 
-void RenderScene(Camera3D g_camera, const std::vector<BasePart*> g_instances) {
+void RenderScene(Camera3D g_camera, const std::vector<Object*> g_instances) {
     BeginMode3D(g_camera);
     DrawSkybox();
 
-    for (BasePart* inst : g_instances) {
+    for (Object* inst : g_instances) {
         if (inst->ClassName == "Part") {
             Part* p = dynamic_cast<Part*>(inst);
             if (p) DrawPart(*p);
