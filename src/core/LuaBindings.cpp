@@ -51,19 +51,17 @@ void Lua_RegisterSignal(lua_State* L) {
     lua_pop(L, 1);
 }
 
-namespace LuaBindings {
-    void RegisterScriptBindings(lua_State* L) {
-        lua_pushcfunction(L, lua_CapturedPrint, "print");
-        lua_setglobal(L, "print");
+void RegisterScriptBindings(lua_State* L) {
+    lua_pushcfunction(L, lua_CapturedPrint, "print");
+    lua_setglobal(L, "print");
 
-        Vector3Game_Bind(L);
-        Color3_Bind(L);
-        Instance_Bind(L);
-        Task_Bind(L);
+    Vector3Game_Bind(L);
+    Color3_Bind(L);
+    Instance_Bind(L);
+    Task_Bind(L);
 
-        BasePart_Bind(L);
-        Part_Bind(L);
+    BasePart_Bind(L);
+    Part_Bind(L);
 
-        Lua_RegisterSignal(L);
-    }
+    Lua_RegisterSignal(L);
 }
