@@ -9,5 +9,5 @@
 
 #include "../instances/Part.h"
 
-extern std::vector<BasePart*> g_instances;
+extern std::vector<Object*> g_instances;
 void Instance_Bind(lua_State* L);
