@@ -8,14 +8,28 @@ int TextEditor::GetLineCount() {
     return count;
 }
 
+void TextEditor::ExecuteCurrentScript() {
+    if (text.empty()) return;
+    int tasksBefore = g_tasks.size();
 
-void TextEditor::OnLog(const std::string& message) {
-    // keep, will be used for when text editor has built-in console
+    runningTask = Task_Run(L, text);
+
+    int tasksAfter = g_tasks.size();
+    if (tasksAfter > tasksBefore) {
+        executedScript = true;
+    }
+}
+
+void TextEditor::StopCurrentScript() {
+    if (runningTask) {
+        runningTask->ShouldStop = true;
+        runningTask = nullptr;
+        executedScript = false;
+    }
 }
 
 int InputTextCallback(ImGuiInputTextCallbackData* data) {
     if (data->EventFlag == ImGuiInputTextFlags_CallbackResize) {
-        // ImGui requests buffer resize
         std::string* str = reinterpret_cast<std::string*>(data->UserData);
         str->resize(data->BufTextLen);
         data->Buf = str->data();
@@ -28,7 +42,7 @@ void TextEditor::Draw() {
     if (!visible) return;
 
     ImGui::SetNextWindowSize(ImVec2(800, 600), ImGuiCond_Once);
-    ImGui::SetNextWindowPos(ImVec2(60, 60), ImGuiCond_Once);
+    ImGui::SetNextWindowPos(ImVec2(80, 80), ImGuiCond_Once);
 
     if (!ImGui::Begin(title.c_str(), &visible, ImGuiWindowFlags_MenuBar)) {
         ImGui::End();
@@ -40,11 +54,14 @@ void TextEditor::Draw() {
             if (ImGui::MenuItem("New", "Ctrl+N")) {}
 
             ImGui::Separator();
+            if (ImGui::MenuItem("Open", "Ctrl+N")) {}
+
+            ImGui::Separator();
             if (ImGui::MenuItem("Save", "Ctrl+S")) {}
             if (ImGui::MenuItem("Save as..", "Ctrl+Shift+S")) {}
 
             ImGui::Separator();
-            if (ImGui::MenuItem("Quit ")) {}
+            if (ImGui::MenuItem("Quit")) visible = false;
 
             ImGui::EndMenu();
         }
@@ -59,7 +76,8 @@ void TextEditor::Draw() {
             if (ImGui::MenuItem("Paste", "Ctrl+P")) {}
 
             ImGui::Separator();
-            if (ImGui::MenuItem("Clear Output", "Ctrl+P")) {}
+            if (ImGui::MenuItem("Execute Script", "Ctrl+F")) if (!executedScript) ExecuteCurrentScript();
+            if (ImGui::MenuItem("Stop Script", "Ctrl+G")) if (executedScript) StopCurrentScript();
 
             ImGui::EndMenu();
         }
@@ -67,8 +85,18 @@ void TextEditor::Draw() {
         ImGui::EndMenuBar();
     }
 
+    if (IsKeyDown(KEY_LEFT_CONTROL)) {
+        if (IsKeyPressed(KEY_F)) {
+            if (!executedScript) ExecuteCurrentScript();
+        }
+
+        if (IsKeyPressed(KEY_G)) {
+            if (executedScript) StopCurrentScript();
+        }
+    }
+
     ImVec2 availRegion = ImGui::GetContentRegionAvail();
-    availRegion.y = std::max(availRegion.y - 100, 60.f);
+    availRegion.y = std::max(availRegion.y, 60.f);
 
     ImGui::BeginChild("TextEditorArea", availRegion, true, ImGuiWindowFlags_HorizontalScrollbar);
     ImGui::Columns(2, "text_colums", false);
@@ -88,7 +116,7 @@ void TextEditor::Draw() {
     ImGui::SetCursorPosY(-scrollY);
 
     ImGui::NextColumn();
-    ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.12f, 0.12f, 0.12f, 1.f));
+    ImGui::PushStyleColor(ImGuiCol_FrameBg, ImGui::GetStyleColorVec4(ImGuiCol_MenuBarBg));
     ImGui::PushItemWidth(-FLT_MIN);
 
     ImGuiInputTextFlags flags = ImGuiInputTextFlags_AllowTabInput | ImGuiInputTextFlags_CallbackResize;
@@ -106,21 +134,6 @@ void TextEditor::Draw() {
     ImGui::Columns(1);
     ImGui::PopFont();
 
-    ImGui::EndChild();
-
-    ImGui::BeginChild("EmbeddedConsole", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar);
-
-    const float footer_height_to_reserve = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing();
-    if (ImGui::BeginChild("OutputScrollingRegion", ImVec2(0, -footer_height_to_reserve), false, ImGuiWindowFlags_HorizontalScrollbar)) {
-        for (size_t i = 0; i < history.size(); i++) {
-            ImGui::Text("%s", history[i].c_str());
-        }
-
-        if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY()) ImGui::SetScrollHereY(1.0f);
-
-    }
-
-    ImGui::EndChild();
     ImGui::EndChild();
 
     ImGui::End();
