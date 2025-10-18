@@ -25,9 +25,4 @@
 extern std::vector<std::string> luaOutput;
 extern Logger logger;
 
-namespace LuaBindings {
-    int Lua_SpawnPart(lua_State* L);
-    int Lua_SetCameraPos(lua_State* L);
-
-    void RegisterScriptBindings(lua_State* L);
-}
+void RegisterScriptBindings(lua_State* L);
