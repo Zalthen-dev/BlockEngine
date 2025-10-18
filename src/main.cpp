@@ -7,7 +7,6 @@
 #include "raylib.h"
 #include "raymath.h"
 
-
 //#include "imgui.h"
 //#include "rlImGui.h"
 #include "../dependencies/imgui/imgui.h"
@@ -24,11 +23,10 @@
 #include "ui/TextEditor.h"
 
 lua_State* L_main = nullptr;
+
 std::vector<Gui*> g_guis;
 
 Camera3D g_camera{};
-Console console;
-TextEditor textEditor;
 
 static float gYaw = 0.0f;
 static float gPitch = 0.0f;
@@ -50,6 +48,12 @@ void RenderFrame(Camera3D camera) {
     RenderScene(camera, g_instances);
     //EndMode3D();
 
+    if (ImGui::IsAnyItemActive()) {
+        DrawText("Item Active", 20, 20, 20, GREEN);
+    } else {
+        DrawText("No Item Active", 20, 20, 20, RED);
+    }
+
     rlImGuiBegin();
     for (auto gui :g_guis)
         gui->Draw();
@@ -64,14 +68,14 @@ int main(int argc, char** argv) {
 
     L_main = luaL_newstate();
     luaL_openlibs(L_main);
-    LuaBindings::RegisterScriptBindings(L_main);
+    RegisterScriptBindings(L_main);
 
     if (argc > 1) {
         printf("Lua script provided! Trying to load...\n");
 
         std::string scriptText = readFile(argv[1]);
 
-        if (!Task_RunScript(L_main, scriptText)) {
+        if (!Task_TryRun(L_main, scriptText)) {
             printf("Failed to load lua script!\n");
             return 1;
         }
@@ -84,6 +88,8 @@ int main(int argc, char** argv) {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(1280, 720, "BlockEngine");
     SetTargetFPS(500);
+
+    //SetExitKey(KEY_NULL);
 
     rlImGuiSetup(true);
     auto io = &ImGui::GetIO();
@@ -113,10 +119,13 @@ int main(int argc, char** argv) {
 
     LoadSkybox();
 
+    Console console;
     console.SetVisible(true);
     console.Log("Type 'help' for a list of commands");
 
-    textEditor.SetVisible(true);
+    TextEditor scriptEditor;
+    scriptEditor.SetLuaState(L_main);
+    scriptEditor.SetVisible(true);
 
     while (!WindowShouldClose()) {
         //const double time = GetTime();
@@ -131,25 +140,40 @@ int main(int argc, char** argv) {
         if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
             anchorPos = GetMousePosition();
             rotatingCamera = true;
+            warpThisFrame = true;
         }
         if (IsMouseButtonReleased(MOUSE_BUTTON_RIGHT)) {
             rotatingCamera = false;
+            warpThisFrame = false;
         }
 
         if (rotatingCamera) {
             if (!warpThisFrame) {
-                Vector2 delta = Vector2Subtract(GetMousePosition(), anchorPos);
-                gYaw   += delta.x * 0.004f;
-                gPitch += -delta.y * 0.004f;
+                Vector2 rotDelta = GetMouseDelta();
+                gYaw += rotDelta.x * 0.008f;
+                gPitch += -rotDelta.y * 0.008f;
 
                 const float limit = PI/2 - 0.01f;
                 if (gPitch > limit)  gPitch = limit;
                 if (gPitch < -limit) gPitch = -limit;
             } else {
-                SetMousePosition((int)anchorPos.x, (int)anchorPos.y);
+                //SetMousePosition((int)anchorPos.x, (int)anchorPos.y);
             }
 
             warpThisFrame = !warpThisFrame;
+        }
+
+        if (mouseWheelDelta != 0) {
+            Ray screenRay = GetScreenToWorldRay(GetMousePosition(), g_camera);
+            g_camera.position += screenRay.direction * mouseWheelDelta;
+        }
+
+        if (!ImGui::IsAnyItemFocused()) {
+            float rotSpeed  = 2.0f * deltaTime;
+            if (IsKeyDown(KEY_RIGHT)) gYaw += rotSpeed;
+            if (IsKeyDown(KEY_LEFT)) gYaw -= rotSpeed;
+            if (IsKeyDown(KEY_UP)) gPitch += rotSpeed;
+            if (IsKeyDown(KEY_DOWN)) gPitch -= rotSpeed;
         }
 
         Vector3 forward = {
@@ -180,7 +204,7 @@ int main(int argc, char** argv) {
         RenderFrame(g_camera);
     }
 
-    for (BasePart* inst : g_instances) {
+    for (Object* inst : g_instances) {
         delete inst;
     }
 
@@ -188,6 +212,10 @@ int main(int argc, char** argv) {
 
     g_tasks.clear();
     g_instances.clear();
+    g_guis.clear();
+
+    lua_close(L_main);
+    L_main = nullptr;
 
     rlImGuiShutdown();
     UnloadSkybox();
