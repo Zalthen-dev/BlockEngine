@@ -3,7 +3,7 @@
 #include <vector>
 #include <cstdio>
 #include <algorithm>
-#include <functional>
+#include <memory>
 
 #include "raylib.h"
 #include "raymath.h"
@@ -17,19 +17,19 @@ struct LuaTask {
     double WakeTime = 0.0;
     double SleepStartTime = 0.0;
     bool Finished = false;
+    bool ShouldStop = false;
 
-    LuaTask(lua_State* L)
-    : thread(lua_newthread(L)) {}
+    LuaTask(lua_State* L) {
+        thread = lua_newthread(L);
+        lua_pop(L, 1);
+        luaL_sandboxthread(thread);
+    }
 };
 
-struct SleepingTask {
-    lua_State* thread;
-    double wakeTime; // in seconds
-};
+extern std::vector<std::unique_ptr<LuaTask>> g_tasks;
 
-extern std::vector<LuaTask> g_tasks;
+std::unique_ptr<LuaTask> Task_Run(lua_State* L, std::string& scriptText);
+int Task_TryRun(lua_State* L, std::string& scriptText);
 
-int Task_RunScript(lua_State* L, std::string& scriptText);
-
-void TaskScheduler_Step();
+void TaskScheduler_Step(void);
 void Task_Bind(lua_State* L);
