@@ -66,11 +66,19 @@ void Console::ExecCommand(std::string text) {
     if (cmd == "help") {
         Console::Log("Commands:");
         Console::Log("- help: show this message");
+        Console::Log("- controls: controls for the camera");
         Console::Log("- clear: clear console output");
         Console::Log("- lua <string>: execute text as lua script");
-        Console::Log("- title <string>: change the title of this window");
+        Console::Log("- luatasks: get number of tasks running");
     } else if (cmd == "clear") {
         Console::ClearLog();
+    } else if (cmd == "controls") {
+        Console::Log("Controls:");
+        Console::Log("- WASD: move forward/left/backwards/rightwards");
+        Console::Log("- RightClick, Arrow Keys: rotate camera");
+        Console::Log("- Space, E: go upward");
+        Console::Log("- Q: go downward");
+        Console::Log("- Scroll: move toward/away from cursor");
     } else if (cmd == "lua") {
         std::string scriptText = subStrAfterChar(text, " ");
         if (scriptText.empty()) {
@@ -78,12 +86,11 @@ void Console::ExecCommand(std::string text) {
             return;
         }
 
-        if (!Task_RunScript(L_main, scriptText)) {
+        if (!Task_TryRun(L_main, scriptText)) {
             Console::Error("Failed to execute lua script");
         }
-    } else if (cmd == "title") {
-        std::string newTitle = subStrAfterChar(text, " ");
-        SetTitle(newTitle);
+    } else if (cmd == "luatasks") {
+        Console::Log(std::to_string(g_tasks.size()));
     } else {
         Console::Error("Unknown command: " + cmd);
         Console::Log("Type 'help' for a list of commands");
@@ -106,7 +113,7 @@ static int TextEditCallback(ImGuiInputTextCallbackData* data) {
 void Console::Draw() {
     if (!visible) return;
 
-    ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_Once);
+    ImGui::SetNextWindowSize(ImVec2(520, 430), ImGuiCond_Once);
     ImGui::SetNextWindowPos(ImVec2(60, 60), ImGuiCond_Once);
 
     if (!ImGui::Begin(title.c_str(), &visible)) {
@@ -121,7 +128,6 @@ void Console::Draw() {
 
             ImGui::EndPopup();
         }
-
 
         for (size_t i = 0; i < history.size(); i++) {
             ImGui::TextColored(colors[i], "%s", history[i].c_str());
@@ -146,6 +152,7 @@ void Console::Draw() {
         inputBuf[0] = '\0';
         ImGui::SetKeyboardFocusHere(-1);
     }
+
 
     ImGui::End();
 }
