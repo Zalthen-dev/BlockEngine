@@ -1,3 +1,8 @@
+# Archived? What for?
+Yeah so turns out I'm not a good C++ developer and after not touching this for a month I can't bring myself to understand the code I've written before
+
+What am I doing next? Oh, [something similar but this time with more success!](https://github.com/Zalthen-dev/Luanos-Engine)
+
 # BlockEngine (Demo)
 <img src="repo/BlockEngineCard.png"/>
 <a href="https://discord.gg/xMPCsx3dNf" style="text-decoration:none;">
